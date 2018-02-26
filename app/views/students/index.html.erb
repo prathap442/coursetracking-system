@@ -1,0 +1,68 @@
+<p id="notice"><%= notice %></p>
+<%arr1=(((Date.today-30.years).year)..((Date.today-18.years).year)).to_a
+hash_of_year={}
+hash_of_month={}
+arr2=["JAN","FEB","MARCH","April","MAY","June","July","Aug","Sep","Oct",
+  "Nov","DEC"]
+number=1%>
+
+<%arr1.each do |yer|%>
+   <%hash_of_year[yer]=Student.all.pluck(:dob).find_all{|x| x.year == yer}.count%>
+   <%hash_of_month[arr2[number-1]]=Student.all.pluck(:dob).find_all{|x| x.month == number}.count%>
+   <%number+=1%>
+<%end%>
+
+<div class="row">
+ <div class='col-md-6'>
+   put the table inside 
+   <!-- put the 6 columns allocated to the table -->
+ </div>
+ <div class='col-md-6'>
+   put the form inside
+   <!-- puts the 6 columns allocated to the form i.e., right half of the page -->
+ </div>
+</div>
+
+<div class="row">
+<div class='col-md-8'>
+<h1>Students</h1>
+<table class="table hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Major</th>
+      <th>Courses</th>
+      <th>datae of Birth</th>
+    </tr>
+  </thead>
+<tbody>
+  <% @students.each do |student| %>
+      <tr>
+        <td><%=link_to  student.name, student_path(student.id)%></td>
+        <td><%= student.email %></td>
+        <td><%= student.major %></td>
+        <td> <%student.courses.each do |course|%>
+             <%=course.name%>
+             <%end%></td>
+        <td><%=student.dob%></td>
+        <%#= link_to 'Show', student %>
+        <%#= link_to 'Edit', edit_student_path(student) %>
+        <%#= link_to 'Destroy', student, method: :delete, data: { confirm: 'Are you sure?' } %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div class='col-md-4'>
+   <%= render 'form',student: @student%>
+</div>
+</div>
+<br/>
+<%= link_to 'New Student', new_student_path %>
+<%=column_chart(hash_of_year)%>
+<%=column_chart(hash_of_month)%>
+    <% url="https://gender-api.com/get?name=elizabeth&key=tFawQzmmGMKEctzAhm"%>
+    <%response=HTTParty.get(url)%>
+    <%=response.parsed_response%>
+</div>    

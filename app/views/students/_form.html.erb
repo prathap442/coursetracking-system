@@ -1,0 +1,161 @@
+<%= form_with(model: student, local: true,id: "new_student_form") do |form| %>
+  <% if student.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(student.errors.count, "error") %> prohibited this student from being saved:</h2>
+      <ul>
+      <% student.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+    
+  
+  <div class="form-group">
+    <%= form.label :name %>
+      <%= form.text_field :name, id: :student_name,class: "form-control" %>
+    <span id = 'nameError'></span>
+  </div>
+  
+
+
+  <div class="form-group">
+    <%= form.label :email %>
+    <%= form.text_field :email, id: :student_email,class: "form-control" %>
+    <span id = 'emailError'></span>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :major %>
+    <%= form.text_field :major, id: :student_major,class: "form-control" %>
+    <span id = 'majorError'></span>
+  </div>
+
+
+  <div class="form-group">
+    <%= form.label :dob %>
+    <%= form.date_select :dob, id: :student_dob,class: "form-control" %>
+    <span id = 'dobError'></span>
+  </div>
+
+
+  <h3>Select Courses</h3>
+   <%= form.collection_check_boxes :course_ids,Course.all,:id,:name do |course|%>
+   <%= course.check_box%>
+   <%= course.label %>
+ <%end%> 
+  <div class="actions">
+    <%= form.submit "Submit",class: "btn btn-primary",id: "submit_details" %>
+    <a href="#" id="student_reset">Reset</a>
+  </div>
+<% end %>
+
+<script>
+   var formHandle=document.getElementById('new_student_form');
+   var resetHandle=document.getElementById('student_reset');
+   var nameHandle = document.getElementById('student_name');
+   var emailHandle = document.getElementById('student_email');
+   var majorHandle = document.getElementById('student_major');
+   var dobHandle = document.getElementById('student_dob');
+   var submitHandle = document.getElementById('submit_details');
+   
+   var nameErrorHandle = document.getElementById('nameError');
+   var emailErrorHandle = document.getElementById('emailError');
+   var majorErrorHandle = document.getElementById('majorError');
+   var dobErrorHandle = document.getElementById('dobError');
+
+   var nameRegex=/^[a-zA-Z]+$/;
+   var emailRegex=/.*@[a-z0-9.-]*/i;
+   var majorRegex = /^[a-zA-Z]+$/;
+   var validator={
+        nameValid: false,
+        nameValid: false,
+        emailValid: false,
+        majorValid: false,
+        dobValid: true
+    }
+   
+   nameHandle.addEventListener('blur',function(){
+      if(nameHandle.value === ""){
+         validator.nameValid= false;
+         nameErrorHandle.innerHTML = 'the name can\'t be blank';
+         console.log(validator);
+      }
+      else if((nameHandle.value !== "")&&(nameRegex.test(nameHandle.value))){
+          validator.nameValid = true;
+          nameErrorHandle.innerHTML = 'thee name is valid';
+      }
+      else{
+          validator.nameValid = false;  
+          nameErrorHandle.innerHTML = 'the name is not a vaid one';
+      }    
+   },false)
+
+   
+  
+   emailHandle.addEventListener('blur',function(){
+      if(emailHandle.value === ""){
+         validator.emailValid = false;
+         emailErrorHandle.innerHTML = 'the email cant be blank!';
+      }
+      else if((emailHandle.value != "")&&(emailRegex.test(emailHandle.value))){
+         var xhr = new XMLHttpRequest();
+          xhr.open('GET',`/students/check_email_presence?email=${emailHandle.value}`,true);
+          xhr.onreadystatechange=function(){
+                if((xhr.status === 200)&&(xhr.readyState === 4)){
+                   var response = JSON.parse(xhr.responseText);
+                     if(response.msg === true){
+                        emailErrorHandle.innerHTML = 'the email can be taken';
+                        validator.emailValid = true;
+                        console.log(`email check ${validator}`);
+                     }
+                     else{
+                        emailErrorHandle.innerHTML = 'the email is not a valid one';
+                        console.log(`email is not a valid one ${validator.values}`);
+                        validator.emailValid = false;
+                     }
+                }
+          }
+          xhr.send();
+      }
+      else{
+         validator.emailValid = false;
+         emailErrorHandle.innerHTML = 'the email is not a valid one';
+      }
+   },false)
+
+   majorHandle.addEventListener('blur',function(){
+      if(majorHandle.value === ""){
+        validator.majorValid = false;
+        majorErrorHandle.innerHTML = "the major cant be blank";
+      }
+      else if((majorHandle.value != "")&&(majorRegex.test(majorHandle.value))) {
+        validator.majorValid = true;
+        majorErrorHandle.innerHTML = 'the major is a valid one';
+      }
+      else{
+        validator.majorValid = false;
+        majorErrorHandle.innerHTML = 'the major is not a valid one'
+      }
+   },false)
+
+   
+   resetHandle.addEventListener('click',function(e){
+      e.preventDefault();
+      formHandle.reset();
+   },false)
+
+   formHandle.addEventListener('submit',function(e){
+     if(Object.values(validator).includes(false)){
+         e.preventDefault();
+         setTimeout(function(){
+             submitHandle.disabled = false;
+         },500)       
+     }
+     else{
+        submitHandle.disabled = false;
+     }
+   },false)
+
+</script>  
+
