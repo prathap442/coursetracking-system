@@ -1,35 +1,73 @@
-<%= form_with(model: course, local: true) do |form| %>
-  <% if course.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(course.errors.count, "error") %> prohibited this course from being saved:</h2>
-
-      <ul>
-      <% course.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
+<%= form_for(@course, remote: true, id: "new_course_form") do |form| %>
+  <li id="course_errors"></li>
+  <div class="form-control">
     <%= form.label :name %>
-    <%= form.text_field :name, id: :course_name %>
+    <%= form.text_field :name, id: :course_name, class: "form-group" %>
+    <span id= "nameError"></span>
   </div>
 
-  <div class="field">
+  <div class="form-control">
     <%= form.label :description %>
-    <%= form.text_area :description, id: :course_description %>
+    <%= form.text_area :description, id: :course_description,class: "form-group" %>
+    <span id = "descriptionError"></span>
   </div>
 
-  
-<div class="field">
+
+<div class="form-control">
   <%= form.label :instructor_id%>
-  <%= form.collection_select :instructor_id,Instructor.all,:id,:name,prompt: "select the instructor"%>
+  <%= form.collection_select :instructor_id,Instructor.all,:id,:name,prompt: "select the instructor", class: "form-group"%>
 </div> 
 
-</div>
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit "Submit the course",id: "submit_full_details",class: "btn btn-primary" %>
   </div>
 <% end %>
+<script>
+  var formHandle = document.getElementById('new_course_form');
+  var nameHandle = document.getElementById('course_name');
+  var descriptionHandle = document.getElementById('course_description');
+  var submitHandle = document.getElementById('submit_full_details');
+  var nameRegex = /^[a-z]+$/i ;
+
+  var nameErrorHandle = document.getElementById('nameError');
+  var descriptionErrorHandle = document.getElementById('descriptionError');
+
+  var validator={
+    nameValid: false,
+    descriptionValid: false
+  }
   
+  nameHandle.addEventListener('blur',function(){
+     if(nameHandle.value === ""){
+        nameErrorHandle.innerHTML = "thee name can't be blank"
+        validator.nameValid = false;
+     }
+     else if((nameHandle.value !== "")&&(nameRegex.test(nameHandle.value))) {
+          nameErrorHandle.innerHTML = "the is a valid one"
+          validator.nameValid = true;
+     }    
+  },false);
+  
+  descriptionErrorHandle.addEventListener('blur',function(){
+      if(descriptionHandle.value !== ""){
+         descriptionErrorHAndle.innerHTML = "the description is given";
+         validator.descriptionValid = true;
+      }
+      else if(descriptionHandle.value === ""){
+         descriptionErrorHandle.innerHTML = "the desccription given cant be blank"
+         validator.descriptionValid = false;
+      }
+  },false)
+
+  formHandle.addEventListener('submit',function(event){
+     if(Object.values(validator).includes(false)){
+         event.preventDefault();
+         setTimeout(function(){
+           submitHandle.disabled = false;
+         },300)
+     }
+     else{
+        submitHandle.disabled = false;
+     }
+  },false)
+</script>

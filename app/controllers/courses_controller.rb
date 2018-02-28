@@ -5,16 +5,20 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
+    @course = Course.new
+    @student = Student.new
   end
 
   # GET /courses/1
   # GET /courses/1.json
   def show
+    @course= Course.find(params[:id])
   end
 
   # GET /courses/new
   def new
     @course = Course.new
+    @student = Student.new
   end
 
   # GET /courses/1/edit
@@ -25,12 +29,13 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-
     respond_to do |format|
       if @course.save
+        format.js
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
       else
+        format.js
         format.html { render :new }
         format.json { render json: @course.errors, status: :unprocessable_entity }
       end

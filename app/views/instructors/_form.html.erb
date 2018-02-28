@@ -1,8 +1,7 @@
-<%= form_with(model: instructor, local: true) do |form| %>
+<%= form_for(@instructor, id: 'new_instructor_form', remote: true) do |form| %>
   <% if instructor.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(instructor.errors.count, "error") %> prohibited this instructor from being saved:</h2>
-
       <ul>
       <% instructor.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -11,22 +10,31 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <div class="form-group">
     <%= form.label :name %>
-    <%= form.text_field :name, id: :instructor_name %>
+    <%= form.text_field :name, id: :instructor_name,class: "form-control" %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
     <%= form.label :email %>
-    <%= form.text_field :email, id: :instructor_email %>
+    <%= form.text_field :email, id: :instructor_email,class: "form-control" %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
     <%= form.label :bio %>
-    <%= form.text_area :bio, id: :instructor_bio %>
+    <%= form.text_area :bio, id: :instructor_bio,class: "form-control" %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit "submit",class: "btn btn-primary" %>
+     <a href="#" id="student_reset">Reset</a>
   </div>
+
+  
 <% end %>
+
+<script>
+   var nameHandle = document.getElementById('instructor_name');
+   var emailHandle = document.getElementById('instructor_email') 
+</script>
+

@@ -1,0 +1,8 @@
+<%if(@course.errors.any?)%>
+    $('#course_errors').append('<%=escape_javascript render 'errors'%>');
+<%else%>
+    $('#course_errors').html('there are no errors');
+    setTimeout(function(){
+        $('#course_notices').html('the record was successfully created');
+    },5000)
+<%end%>    

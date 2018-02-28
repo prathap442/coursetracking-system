@@ -12,6 +12,11 @@ number=1%>
    <%number+=1%>
 <%end%>
 
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new_student_form">
+      New student form
+</button>
+
+
 <div class="row">
  <div class='col-md-6'>
    put the table inside 
@@ -19,13 +24,57 @@ number=1%>
  </div>
  <div class='col-md-6'>
    put the form inside
-   <!-- puts the 6 columns allocated to the form i.e., right half of the page -->
+   <!--uts the 6 columns allocated to the form i.e., right half of the page -->
  </div>
 </div>
 
-<div class="row">
+
+
+
+<div class="row" id="studentsList">
+  <%@students.each do |student|%>
+   <div class = "col-md-3">
+     <div class="card">
+     <img class="card-img-top" src="http://www.acfe.com/uploadedImages/ACFE_Website/Content/images/membership-certification/graduate-member.jpg" alt="Card image cap">
+     <div class="card-block">
+        <h4 class="card-title"><%= student.name%></h4>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <p class="card-text"><small class="text-muted"><%=student.created_at%></small></p>
+        <%= link_to "Register","/students/new",class: "btn btn-primary" %>
+        <span class = "float-right">Number of courses taken :<%= student.courses.count%>  </span>
+     </div>
+     </div>
+   </div>
+  <%end%> 
+</div>
+
+
+  <div class="modal fade" id="new_student_form" tabindex="-1" role="dialog" aria-labelledby="new_student_formTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- this is the modal body  heerere is the thing that  -->
+      <div class="modal-body">
+          <div id="student_form_errors"></div>
+          <%= render 'students/form',student: @student%>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+
+<div class="row" >
 <div class='col-md-8'>
-<h1>Students</h1>
+<h1 >Students</h1>
 <table class="table hover">
   <thead>
     <tr>
@@ -39,7 +88,7 @@ number=1%>
 <tbody>
   <% @students.each do |student| %>
       <tr>
-        <td><%=link_to  student.name, student_path(student.id)%></td>
+        <td><a href="#" class="btn btn-default" data-target="#popupExternal" data-toggle="modal-popover"><%=student.name%></a></td>
         <td><%= student.email %></td>
         <td><%= student.major %></td>
         <td> <%student.courses.each do |course|%>

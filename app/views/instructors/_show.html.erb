@@ -1,0 +1,31 @@
+<p>
+  <html>
+<body>
+<form action="mailto:someone@example.com" method="post" enctype="text/plain">
+<input type="hidden" name="#{@instructor.email}">
+<input type="hidden" name="comment" size="5">
+<input type="submit" value="sendemail">
+</form>
+</body>
+</html></p>
+
+<p>
+  <strong>Bio:</strong>
+  <%= @instructor.bio %>
+</p>
+
+
+<h2>Courses taught are as follows:</h2>
+<% if ! (@instructor.courses.empty?)%>
+ <% @instructor.courses.each do |course|%>
+    <li><%= link_to course.name,course_path(course.id)%>-----   
+        	<%=course.students.count%>students enrolled</li>
+        	<%course.students.each do |student|%>
+        	   <%=student.name%><br/>
+        	<%end%>	
+ <% end %>
+<%else%>
+    <h2>NO students enrolled for this course</h2>
+<%end%>
+
+

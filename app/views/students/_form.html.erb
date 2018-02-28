@@ -1,161 +1,196 @@
-<%= form_with(model: student, local: true,id: "new_student_form") do |form| %>
-  <% if student.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(student.errors.count, "error") %> prohibited this student from being saved:</h2>
-      <ul>
-      <% student.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+<%= form_for(student, id: "new_student_form",remote: true) do |form| %>
+<div id="student_form_errors">
+</div>  
+
+<div class="form-group">
+  <%= form.label :name %>
+  <%= form.text_field :name, id: :student_name,class: "form-control" %>
+  <span id = 'nameError'></span>
+</div>
+
+
+
+<div class="form-group">
+  <%= form.label :email %>
+  <%= form.text_field :email, id: :student_email,class: "form-control" %>
+  <span id = 'emailError'></span>
+</div>
+
+<div class="form-group">
+  <%= form.label :major %>
+  <%= form.text_field :major, id: :student_major,class: "form-control" %>
+  <span id = 'majorError'></span>
+</div>
+
+
+<div class="form-group">
+  <%= form.label :dob %>
+  <%= form.date_select :dob, id: :student_dob,class: "form-control" %>
+  <span id = 'dobError'></span>
+</div>
+
+<div class= "form-group">
+<h3>Select Courses</h3>
+<%= form.collection_select :course_ids,Course.all,:id,:name,{prompt: "enter the courses to be selected"},{multiple: true,id: "student_course_ids"}%>
+</div>
+
+<div class = form-group>
+  <h3>Select the cityname</h3>
+  <%=form.label  :city_id%>
+  <%=form.collection_select :city_id,City.all,:id,:name,{prompt: "Select the city"}, { id: :student_city_id} %>
+  <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal">Add City</button>
+
+<%= form.submit "Submit the Details",id:"submit_details"%>
+</div>
+<%end %>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Type the new city</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <%=render '/cities/form',city: @city%>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
     </div>
-  <% end %>
-    
-  
-  <div class="form-group">
-    <%= form.label :name %>
-      <%= form.text_field :name, id: :student_name,class: "form-control" %>
-    <span id = 'nameError'></span>
   </div>
-  
+</div>
 
 
-  <div class="form-group">
-    <%= form.label :email %>
-    <%= form.text_field :email, id: :student_email,class: "form-control" %>
-    <span id = 'emailError'></span>
-  </div>
 
-  <div class="form-group">
-    <%= form.label :major %>
-    <%= form.text_field :major, id: :student_major,class: "form-control" %>
-    <span id = 'majorError'></span>
-  </div>
-
-
-  <div class="form-group">
-    <%= form.label :dob %>
-    <%= form.date_select :dob, id: :student_dob,class: "form-control" %>
-    <span id = 'dobError'></span>
-  </div>
-
-
-  <h3>Select Courses</h3>
-   <%= form.collection_check_boxes :course_ids,Course.all,:id,:name do |course|%>
-   <%= course.check_box%>
-   <%= course.label %>
- <%end%> 
-  <div class="actions">
-    <%= form.submit "Submit",class: "btn btn-primary",id: "submit_details" %>
-    <a href="#" id="student_reset">Reset</a>
-  </div>
-<% end %>
-
+ <script type="text/javascript">
+  $("#student_course_ids").chosen({disable_search_threshold: 10});
+</script> 
 <script>
-   var formHandle=document.getElementById('new_student_form');
-   var resetHandle=document.getElementById('student_reset');
-   var nameHandle = document.getElementById('student_name');
-   var emailHandle = document.getElementById('student_email');
-   var majorHandle = document.getElementById('student_major');
-   var dobHandle = document.getElementById('student_dob');
-   var submitHandle = document.getElementById('submit_details');
-   
-   var nameErrorHandle = document.getElementById('nameError');
-   var emailErrorHandle = document.getElementById('emailError');
-   var majorErrorHandle = document.getElementById('majorError');
-   var dobErrorHandle = document.getElementById('dobError');
+ var formHandle=document.getElementById('new_student_form');
+ var resetHandle=document.getElementById('student_reset');
+ var nameHandle = document.getElementById('student_name');
+ var emailHandle = document.getElementById('student_email');
+ var majorHandle = document.getElementById('student_major');
+ var dobHandle = document.getElementById('student_dob');
+ var submitHandle = document.getElementById('submit_details');
 
-   var nameRegex=/^[a-zA-Z]+$/;
-   var emailRegex=/.*@[a-z0-9.-]*/i;
-   var majorRegex = /^[a-zA-Z]+$/;
-   var validator={
-        nameValid: false,
-        nameValid: false,
-        emailValid: false,
-        majorValid: false,
-        dobValid: true
-    }
-   
-   nameHandle.addEventListener('blur',function(){
-      if(nameHandle.value === ""){
-         validator.nameValid= false;
-         nameErrorHandle.innerHTML = 'the name can\'t be blank';
-         console.log(validator);
-      }
-      else if((nameHandle.value !== "")&&(nameRegex.test(nameHandle.value))){
-          validator.nameValid = true;
-          nameErrorHandle.innerHTML = 'thee name is valid';
-      }
-      else{
-          validator.nameValid = false;  
-          nameErrorHandle.innerHTML = 'the name is not a vaid one';
-      }    
-   },false)
+ var nameErrorHandle = document.getElementById('nameError');
+ var emailErrorHandle = document.getElementById('emailError');
+ var majorErrorHandle = document.getElementById('majorError');
+ var dobErrorHandle = document.getElementById('dobError');
 
-   
+ var nameRegex=/^[a-zA-Z]+$/;
+ var emailRegex=/.*@[a-z0-9.-]*/i;
+ var majorRegex = /^[a-zA-Z]+$/;
+ var validator={
+  nameValid: false,
+  nameValid: false,
+  emailValid: false,
+  majorValid: false,
+}
+
+nameHandle.addEventListener('blur',function(){
+  if(nameHandle.value === ""){
+   validator.nameValid= false;
+   $('#student_name')[0].attributes[1].value="form-control is-invalid"
+   nameErrorHandle.innerHTML = 'the name can\'t be blank';
+   console.log(validator);
+ }
+ else if((nameHandle.value !== "")&&(nameRegex.test(nameHandle.value))){
+  validator.nameValid = true;
+  nameErrorHandle.innerHTML = 'thee name is valid';
+  $('#student_name')[0].attributes[1].value="form-control is-valid"
+}
+else{
+  validator.nameValid = false;  
+  nameErrorHandle.innerHTML = 'the name is not a vaid one';
+  $('#student_name')[0].attributes[1].value="form-control is-invalid";
+}    
+},false)
+
+
+
+emailHandle.addEventListener('blur',function(){
+  if(emailHandle.value === ""){
+   validator.emailValid = false;
+   emailErrorHandle.innerHTML = 'the email cant be blank!';
+   $('#student_email')[0].attributes[1].value="form-control is-invalid";
   
-   emailHandle.addEventListener('blur',function(){
-      if(emailHandle.value === ""){
-         validator.emailValid = false;
-         emailErrorHandle.innerHTML = 'the email cant be blank!';
-      }
-      else if((emailHandle.value != "")&&(emailRegex.test(emailHandle.value))){
-         var xhr = new XMLHttpRequest();
-          xhr.open('GET',`/students/check_email_presence?email=${emailHandle.value}`,true);
-          xhr.onreadystatechange=function(){
-                if((xhr.status === 200)&&(xhr.readyState === 4)){
-                   var response = JSON.parse(xhr.responseText);
-                     if(response.msg === true){
-                        emailErrorHandle.innerHTML = 'the email can be taken';
-                        validator.emailValid = true;
-                        console.log(`email check ${validator}`);
-                     }
-                     else{
-                        emailErrorHandle.innerHTML = 'the email is not a valid one';
-                        console.log(`email is not a valid one ${validator.values}`);
-                        validator.emailValid = false;
-                     }
-                }
-          }
-          xhr.send();
-      }
-      else{
-         validator.emailValid = false;
-         emailErrorHandle.innerHTML = 'the email is not a valid one';
-      }
-   },false)
+ }
+ else if((emailHandle.value != "")&&(emailRegex.test(emailHandle.value))){
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET',`/students/check_email_presence?email=${emailHandle.value}`,true);
+   xhr.onreadystatechange=function(){
+    if((xhr.status === 200)&&(xhr.readyState === 4)){
+     var response = JSON.parse(xhr.responseText);
+     if(response.msg === true){
+      emailErrorHandle.innerHTML = 'the email can be taken';
+      validator.emailValid = true;
+      console.log(`email check ${validator}`);
+      $('#student_name')[0].attributes[1].value="form-control is-valid"
+      
+    }
+    else{
+      emailErrorHandle.innerHTML = 'the email is not a valid one';
+      console.log(`email is not a valid one ${validator.values}`);
+      validator.emailValid = false;
+      $('#student_email')[0].attributes[1].value="form-control is-invalid"
+    }
+  }
+}
+xhr.send();
+}
+else{
+ validator.emailValid = false;
+ emailErrorHandle.innerHTML = 'the email is not a valid one';
+ $('#student_email')[0].attributes[1].value="form-control is-invalid"
+}
+},false)
 
-   majorHandle.addEventListener('blur',function(){
-      if(majorHandle.value === ""){
-        validator.majorValid = false;
-        majorErrorHandle.innerHTML = "the major cant be blank";
-      }
-      else if((majorHandle.value != "")&&(majorRegex.test(majorHandle.value))) {
-        validator.majorValid = true;
-        majorErrorHandle.innerHTML = 'the major is a valid one';
-      }
-      else{
-        validator.majorValid = false;
-        majorErrorHandle.innerHTML = 'the major is not a valid one'
-      }
-   },false)
+majorHandle.addEventListener('blur',function(){
+  if(majorHandle.value === ""){
+    validator.majorValid = false;
+    majorErrorHandle.innerHTML = "the major cant be blank";
+   $('#student_major')[0].attributes[1].value="form-control is-invalid";
 
-   
-   resetHandle.addEventListener('click',function(e){
-      e.preventDefault();
-      formHandle.reset();
-   },false)
+  }
+  else if((majorHandle.value != "")&&(majorRegex.test(majorHandle.value))) {
+    validator.majorValid = true;
+    majorErrorHandle.innerHTML = 'the major is a valid one';
+    $('#student_major')[0].attributes[1].value="form-control is-valid";
+  }
+  else{
+    validator.majorValid = false;
+    majorErrorHandle.innerHTML = 'the major is not a valid one'
+    $('#student_major')[0].attributes[1].value="form-control is-invalid";
+  }
+},false)
 
-   formHandle.addEventListener('submit',function(e){
+
+resetHandle.addEventListener('click',function(e){
+  e.preventDefault();
+  formHandle.reset();
+},false)
+
+/*   formHandle.addEventListener('submit',function(e){
      if(Object.values(validator).includes(false)){
          e.preventDefault();
          setTimeout(function(){
              submitHandle.disabled = false;
+             console.log(`${validator.values}`);
          },500)       
      }
      else{
         submitHandle.disabled = false;
+        formHandle.reset(); 
      }
-   },false)
+   },false) */
 
-</script>  
+
+ </script>  
 

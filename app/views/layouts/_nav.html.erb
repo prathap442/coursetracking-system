@@ -4,11 +4,23 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
+
+
+
+
+  <!--this is for the row div -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= controller.controller_name == 'students' ? 'active' : ''%>">
+       <!--<li class="nav-item>
+             <a href="" class ="nav-link">Students
+             <span class= "badge badge-secondary">Students 100</span>  -->
         <!-- <a class="nav-link" href="#"> My Link </a> -->
-        <%= link_to "Students", students_path, class: "nav-link" %>
+        
+       
+      <li class="nav-item <%= controller.controller_name == 'students' ? 'active' : ''%>">
+        <%= link_to students_path, class: "nav-link" do  %>
+           Students<span class= "badge badge-secondary"><%= Student.count %></span>
+        <% end%>
       </li>
 
       <li class="nav-item <%= controller.controller_name == 'instructors' ? 'active' : ''%>">
@@ -19,6 +31,36 @@
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Courses
        </a>
+
+      <%= link_to courses_path class: "nav-link" do %>
+       Courses<span class="badge badge-secondary"><%=Course.count%></span>
+      <%end%>
+
+
+
+       <div>
+       <nav aria-label = "breadcrumb">
+         <ol class = "breadcrumb">
+          <li class = "breadcrumb-item"><a href="/">Home</a></li>
+          <li class = "breadcrumb-item">
+             <%= link_to controller.controller_name.capitalize,"/#{controller.controller_name}"%></li>
+          <% if(controller.action_name === "show")%>
+              <%case controller.controller_name%>
+                 <%when "students"%> 
+                      <li class = "breadcrumb-item active" aria-current= "page"><%= @student.name%></li>   
+                 <%when "instructors"%>
+                      <li class  = "braedcrumb-item active" aria-current = "page"><%= @instructor.name%>
+                 <% when "courses"%>
+                      <li calss = "breadcrumb-item active" aria-current = "page"><%=@course.name%></li>
+              <% end%>           
+          <%else%>
+               <li class = "breadcrumb-item active" aria-current = "page"><%=controller.action_name %></li>
+          <% end%>
+         </ol> 
+       </nav>
+       </div>   
+
+
        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
          <% Course.all.each do |course| %>
            <!-- <a class="dropdown-item" href="#">Action</a> -->

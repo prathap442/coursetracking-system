@@ -1,0 +1,9 @@
+<% if(@student.errors.any?)%>
+   $('#student_form_errors').html('');
+   $('#student_form_errors').append('<%= escape_javascript render 'errors'%>');
+<% else %>
+
+   $('#student_form_errors').hide();
+   $('#new_student_form').modal('hide');// this does the work of the hiding he form when there are no errors in the form
+   $('#studentsList').prepend('<%= escape_javascript render 'student'%>');    
+<% end %>

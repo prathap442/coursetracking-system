@@ -5,11 +5,17 @@ class InstructorsController < ApplicationController
   # GET /instructors.json
   def index
     @instructors = Instructor.all
+    @instructor = Instructor.new
   end
 
   # GET /instructors/1
   # GET /instructors/1.json
   def show
+   respond_to do |format|
+        format.js
+        format.html
+        format.json
+   end 
   end
 
   # GET /instructors/new

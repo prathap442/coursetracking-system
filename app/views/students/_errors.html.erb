@@ -1,0 +1,11 @@
+<div class = "alert alert-danger">
+	<%if(@student.errors.any?)%>
+	<ol>
+	<%@student.errors.full_messages.each do |msg,index|%>
+	  <li><%=msg%></li>
+	<%end%>
+	</ol>
+<%else%>
+   
+<%end%>
+</div>

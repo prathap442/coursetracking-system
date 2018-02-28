@@ -6,6 +6,7 @@ class StudentsController < ApplicationController
   def index
     @students = Student.all
     @student = Student.new
+    @city=City.new
   end
 
   # GET /students/1
@@ -17,6 +18,7 @@ class StudentsController < ApplicationController
   # GET /students/new
   def new
     @student = Student.new
+    @city=City.new
   end
 
   # GET /students/1/edit
@@ -29,9 +31,11 @@ class StudentsController < ApplicationController
     @student = Student.new(student_params)
     respond_to do |format|
       if @student.save
+        format.js 
         format.html { redirect_to @student, notice: 'Student was successfully created.' }
         format.json { render :show, status: :created, location: @student }
       else
+        format.js 
         format.html { render :new }
         format.json { render json: @student.errors, status: :unprocessable_entity }
       end
@@ -76,6 +80,6 @@ class StudentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def student_params
-      params.require(:student).permit(:name, :email, :major,:dob, :course_ids)
+      params.require(:student).permit(:name, :email, :major,:dob,:city_id, :course_ids)
     end
 end
